@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Patients</title>
+    </head>
+<body class="p-4">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="container">
+        <h1>Patients</h1>
+        <form id="new-patient" th:action="@{/patients}" method="post" th:object="${patient}" class="mb-4">
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input class="form-control" th:field="*{name}" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Blood Type</label>
+            <input class="form-control" th:field="*{bloodType}" />
+        </div>
+        <button class="btn btn-primary" type="submit">Add</button>
+    </form>
+
+    <table class="table">
+        <thead><tr><th>ID</th><th>Name</th><th>Blood Type</th></tr></thead>
+        <tbody>
+        <tr th:each="p : ${patients}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.name}"></td>
+            <td th:text="${p.bloodType}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

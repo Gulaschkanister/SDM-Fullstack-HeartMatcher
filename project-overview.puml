@@ -1,0 +1,103 @@
+@startuml
+left to right direction
+
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+package "Web Layer" {
+  class HomeController
+  class PatientController
+  class HeartController
+  class CompanyController
+  class NewsletterController
+  class DashboardController
+}
+
+package "Service / Events" {
+  class CandidateNotificationService
+  class NewsletterFeedListener
+  class FeedNotificationEvent
+}
+
+package "Domain" {
+  class PatientEntity
+  class HeartEntity
+  class CompanyEntity {
+    +Set<FeedTopic> subscriptions
+    +subscribe(topic)
+    +unsubscribe(topic)
+  }
+  class NewsletterEntry {
+    +FeedTopic topic
+    +String message
+    +LocalDateTime createdAt
+  }
+  class Patient
+  class Heart
+  class Candidate
+  enum FeedTopic {
+    GENERAL
+    NEW_PATIENT
+    NEW_HEART
+    NEW_CANDIDATE
+  }
+}
+
+package "Matching" {
+  interface IMatcher
+  interface Icandidate
+  class SimpleMatcher
+  class KomplexMatcher
+  class MatchingService
+  interface IManager
+  class Manager
+}
+
+package "Persistence" {
+  interface PatientRepository
+  interface HeartRepository
+  interface CompanyRepository
+  interface NewsletterRepository
+}
+
+class Main
+
+Main ..> PatientRepository
+Main ..> HeartRepository
+
+PatientController --> PatientRepository
+PatientController --> CandidateNotificationService
+PatientController --> FeedNotificationEvent : publishes
+
+HeartController --> HeartRepository
+HeartController --> CandidateNotificationService
+HeartController --> FeedNotificationEvent : publishes
+
+CompanyController --> CompanyRepository
+NewsletterController --> NewsletterRepository
+NewsletterController --> CompanyRepository : loads companies
+DashboardController --> PatientRepository
+DashboardController --> HeartRepository
+
+CandidateNotificationService --> HeartRepository
+CandidateNotificationService --> PatientRepository
+CandidateNotificationService --> FeedNotificationEvent : publishes
+CandidateNotificationService --> KomplexMatcher
+
+NewsletterFeedListener --> NewsletterRepository
+NewsletterFeedListener --> FeedNotificationEvent : listens to
+
+NewsletterEntry --> FeedTopic
+CompanyEntity --> FeedTopic : subscriptions
+
+MatchingService --> IMatcher
+MatchingService --> Manager
+Manager ..|> IManager
+SimpleMatcher ..|> IMatcher
+KomplexMatcher ..|> IMatcher
+
+Candidate ..|> Icandidate
+Candidate --> Patient
+Candidate --> Heart
+
+@enduml
