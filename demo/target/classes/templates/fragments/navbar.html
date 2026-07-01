@@ -1,17 +1,25 @@
 <div th:fragment="navbar">
   <header>
-    <nav class="navbar navbar-expand navbar-light bg-light border-bottom shadow-sm py-2">
-      <div class="container-fluid flex-wrap gap-3">
-        <a class="navbar-brand fw-semibold text-dark" href="/">HeartMatcher</a>
-        <div class="d-flex flex-wrap align-items-center gap-2">
-          <a class="btn btn-sm btn-outline-secondary" href="/dashboard">Dashboard</a>
-          <a class="btn btn-sm btn-outline-secondary" href="/patients">Patienten</a>
-          <a class="btn btn-sm btn-outline-secondary" href="/hearts">Herzen</a>
-          <a class="btn btn-sm btn-outline-secondary" href="/companies">Betriebe</a>
-          <a class="btn btn-sm btn-outline-secondary" href="/newsletter">Feed</a>
-        </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">HeartMatcher</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample" aria-controls="navbarsExample" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExample">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/patients">Patienten</a></li>
+            <li class="nav-item"><a class="nav-link" href="/hearts">Herzen</a></li>
+            <li class="nav-item"><a class="nav-link" href="/companies">Betriebe</a></li>
+            <li class="nav-item"><a class="nav-link" href="/newsletter">Feed</a></li>
+          </ul>
         </div>
       </div>
     </nav>
+    <!-- spacer so fixed-top navbar doesn't cover page content -->
+    <div style="height:70px"></div>
+    <!-- Bootstrap JS (bundle includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </header>
 </div>
