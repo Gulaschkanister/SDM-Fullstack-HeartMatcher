@@ -3,58 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Newsletter</title>
+    <title th:text="#{page.newsletter.title}">Newsletter</title>
 </head>
 <body class="p-4">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-  <div class="container">
-    <h1>Newsletter Feed</h1>
 
-    <form class="row g-3 mt-3 mb-4" method="get" action="/newsletter">
-        <div class="col-md-5">
-            <label class="form-label">Betrieb</label>
-            <select class="form-select" name="companyId">
-                <option value="">Alle Betriebe</option>
-                <option th:each="company : ${companies}"
-                        th:value="${company.id}"
-                        th:selected="${selectedCompanyId != null and selectedCompanyId == company.id}"
-                        th:text="${company.name}"></option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Feed-Typ</label>
-            <select class="form-select" name="topic">
-                <option value="">Alle Themen</option>
-                <option th:each="topic : ${topics}"
-                        th:value="${topic}"
-                        th:selected="${selectedTopic != null and selectedTopic == topic}"
-                        th:text="${topic.label}"></option>
-            </select>
-        </div>
-        <div class="col-md-3 d-flex align-items-end gap-2">
-            <button class="btn btn-primary w-100" type="submit">Filtern</button>
-        </div>
-    </form>
+    <div id="page-content" class="container" th:fragment="page-content">
+        <h1 class="mb-4" th:text="#{page.newsletter.title}">Newsletter Feed</h1>
 
-    <div class="alert alert-info" th:if="${selectedCompany != null}">
-        Zeige Feed für <strong th:text="${selectedCompany.name}"></strong>
-        <span th:if="${#lists.isEmpty(selectedCompany.subscriptions)}">(keine Abos)</span>
-        <span th:unless="${#lists.isEmpty(selectedCompany.subscriptions)}">
-            mit Abos:
-            <span th:each="topic : ${selectedCompany.subscriptions}" th:text="${topic.label}"></span>
-        </span>
-    </div>
-
-    <div class="list-group mt-3">
-        <div th:each="e : ${entries}" class="list-group-item">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <strong th:text="${e.topic.label}"></strong>
-                <small class="text-muted" th:text="${e.createdAt}"></small>
+        <form class="row g-3 mt-3 mb-4"
+              method="get"
+              action="/newsletter"
+              hx-get="/newsletter"
+              hx-target="#page-content"
+              hx-swap="outerHTML">
+            <div class="col-md-5">
+                <label class="form-label" for="companyId" th:text="#{form.company}">Company</label>
+                <select id="companyId" class="form-select" name="companyId">
+                    <option value="" th:text="#{form.allCompanies}">All companies</option>
+                    <option th:each="company : ${companies}"
+                            th:value="${company.id}"
+                            th:selected="${selectedCompanyId != null and selectedCompanyId == company.id}"
+                            th:text="${company.name}"></option>
+                </select>
             </div>
-            <div th:text="${e.message}"></div>
+            <div class="col-md-4">
+                <label class="form-label" for="topic" th:text="#{form.topic}">Feed topic</label>
+                <select id="topic" class="form-select" name="topic">
+                    <option value="" th:text="#{form.allTopics}">All topics</option>
+                            <option th:each="topic : ${topics}"
+                            th:value="${topic}"
+                            th:selected="${selectedTopic != null and selectedTopic == topic}"
+                            th:text="${#messages.msg(topic.messageKey)}"></option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button class="btn btn-primary w-100" type="submit" th:text="#{form.filter}">Filter</button>
+            </div>
+        </form>
+
+        <div class="alert alert-info" th:if="${selectedCompany != null}">
+            <span th:text="#{newsletter.selectedCompany}">Showing feed for</span>
+            <strong th:text="${selectedCompany.name}"></strong>
+            <span th:if="${#lists.isEmpty(selectedCompany.subscriptions)}" th:text="#{newsletter.noSubscriptions}">(no subscriptions)</span>
+            <span th:unless="${#lists.isEmpty(selectedCompany.subscriptions)}">
+                <span th:text="#{newsletter.withSubscriptions}">with subscriptions:</span>
+                <span class="ms-1" th:each="topic : ${selectedCompany.subscriptions}" th:text="${#messages.msg(topic.messageKey)}"></span>
+            </span>
+        </div>
+
+        <div class="list-group mt-3">
+            <div th:each="e : ${entries}" class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <strong th:text="${#messages.msg(e.topic.messageKey)}"></strong>
+                    <small class="text-muted" th:text="${e.createdAt}"></small>
+                </div>
+                <div th:text="${e.message}"></div>
+            </div>
         </div>
     </div>
-</div>
 </body>
 </html>

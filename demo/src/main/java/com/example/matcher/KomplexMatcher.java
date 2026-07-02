@@ -4,44 +4,51 @@ import com.example.model.heart.Heart;
 import com.example.model.patient.Patient;
 
 public class KomplexMatcher implements IMatcher {
-    public boolean match(Patient patient, Heart heart){
-        String pType = patient.getBloodType();
-        String hType = heart.getBloodType();
-        if (pType == null || hType == null) return false;
+    @Override
+    public boolean match(Patient patient, Heart heart) {
+        BloodType recipientBloodType = parseBloodType(patient.getBloodType());
+        BloodType donorBloodType = parseBloodType(heart.getBloodType());
 
-        // Normalize (e.g. "A+", "O-")
-        pType = pType.trim().toUpperCase();
-        hType = hType.trim().toUpperCase();
-
-        // Fast path: exact match
-        if (pType.equals(hType)) return true;
-
-        // Parse ABO and Rh
-        char pRh = pType.charAt(pType.length()-1);
-        char hRh = hType.charAt(hType.length()-1);
-        String pAbo = pType.substring(0, pType.length()-1);
-        String hAbo = hType.substring(0, hType.length()-1);
-
-        // Rh compatibility: recipient '+' accepts both, recipient '-' accepts only '-'
-        if (pRh == '-' && hRh == '+') return false;
-
-        // ABO compatibility rules (donor -> recipient)
-        // Recipient A: donors A, O
-        // Recipient B: donors B, O
-        // Recipient AB: donors A,B,AB,O (universal recipient)
-        // Recipient O: donors O only
-
-        switch (pAbo) {
-            case "A":
-                return hAbo.equals("A") || hAbo.equals("O");
-            case "B":
-                return hAbo.equals("B") || hAbo.equals("O");
-            case "AB":
-                return hAbo.equals("A") || hAbo.equals("B") || hAbo.equals("AB") || hAbo.equals("O");
-            case "O":
-                return hAbo.equals("O");
-            default:
-                return false;
+        if (recipientBloodType == null || donorBloodType == null) {
+            return false;
         }
+
+        if (!isRhCompatible(recipientBloodType.rhFactor(), donorBloodType.rhFactor())) {
+            return false;
+        }
+
+        return isAboCompatible(recipientBloodType.aboGroup(), donorBloodType.aboGroup());
+    }
+
+    private BloodType parseBloodType(String rawBloodType) {
+        if (rawBloodType == null) {
+            return null;
+        }
+
+        String normalizedBloodType = rawBloodType.trim().toUpperCase();
+        if (normalizedBloodType.isBlank() || !normalizedBloodType.matches("^(AB|A|B|O)[+-]$")) {
+            return null;
+        }
+
+        String aboGroup = normalizedBloodType.substring(0, normalizedBloodType.length() - 1);
+        char rhFactor = normalizedBloodType.charAt(normalizedBloodType.length() - 1);
+        return new BloodType(aboGroup, rhFactor);
+    }
+
+    private boolean isRhCompatible(char recipientRhFactor, char donorRhFactor) {
+        return recipientRhFactor == '+' || donorRhFactor == '-';
+    }
+
+    private boolean isAboCompatible(String recipientAboGroup, String donorAboGroup) {
+        return switch (recipientAboGroup) {
+            case "A" -> donorAboGroup.equals("A") || donorAboGroup.equals("O");
+            case "B" -> donorAboGroup.equals("B") || donorAboGroup.equals("O");
+            case "AB" -> true;
+            case "O" -> donorAboGroup.equals("O");
+            default -> false;
+        };
+    }
+
+    private record BloodType(String aboGroup, char rhFactor) {
     }
 }

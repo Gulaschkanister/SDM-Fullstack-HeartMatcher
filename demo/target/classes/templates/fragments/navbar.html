@@ -2,24 +2,27 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">HeartMatcher</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample" aria-controls="navbarsExample" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="/dashboard" th:text="#{app.title}">HeartMatcher</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample"
+          aria-controls="navbarsExample" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExample">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/patients">Patienten</a></li>
-            <li class="nav-item"><a class="nav-link" href="/hearts">Herzen</a></li>
-            <li class="nav-item"><a class="nav-link" href="/companies">Betriebe</a></li>
-            <li class="nav-item"><a class="nav-link" href="/newsletter">Feed</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dashboard" th:text="#{nav.dashboard}">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/patients" th:text="#{nav.patients}">Patients</a></li>
+            <li class="nav-item"><a class="nav-link" href="/hearts" th:text="#{nav.hearts}">Hearts</a></li>
+            <li class="nav-item"><a class="nav-link" href="/companies" th:text="#{nav.companies}">Companies</a></li>
+            <li class="nav-item"><a class="nav-link" href="/newsletter" th:text="#{nav.newsletter}">Newsletter</a></li>
           </ul>
+          <div class="d-flex align-items-center gap-2">
+            <a class="btn btn-sm btn-outline-info" href="?lang=de" th:text="#{nav.language.de}">DE</a>
+            <a class="btn btn-sm btn-outline-info" href="?lang=en" th:text="#{nav.language.en}">EN</a>
+          </div>
         </div>
       </div>
     </nav>
-    <!-- spacer so fixed-top navbar doesn't cover page content -->
     <div style="height:70px"></div>
-    <!-- Bootstrap JS (bundle includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </header>
 </div>

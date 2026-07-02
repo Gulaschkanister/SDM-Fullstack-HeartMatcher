@@ -1,18 +1,18 @@
 package com.example.enums;
 
 public enum FeedTopic {
-    GENERAL("Allgemein"),
-    NEW_PATIENT("Neuer Patient"),
-    NEW_HEART("Neues Herz"),
-    NEW_CANDIDATE("Neuer Kandidat");
+    GENERAL("topic.general"),
+    NEW_PATIENT("topic.newPatient"),
+    NEW_HEART("topic.newHeart"),
+    NEW_CANDIDATE("topic.newCandidate");
 
-    private final String label;
+    private final String messageKey;
 
-    FeedTopic(String label) {
-        this.label = label;
+    FeedTopic(String messageKey) {
+        this.messageKey = messageKey;
     }
 
-    public String getLabel() {
-        return label;
+    public String getMessageKey() {
+        return messageKey;
     }
 }

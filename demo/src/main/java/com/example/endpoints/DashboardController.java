@@ -16,6 +16,8 @@ import java.util.List;
 
 @Controller
 public class DashboardController {
+    private static final String PAGE_VIEW = "dashboard";
+
     private final PatientRepository patientRepository;
     private final HeartRepository heartRepository;
 
@@ -29,20 +31,26 @@ public class DashboardController {
         List<PatientEntity> patients = patientRepository.findAll();
         List<HeartEntity> hearts = heartRepository.findAll();
 
-        int candidateCount = 0;
+        model.addAttribute("patientCount", patients.size());
+        model.addAttribute("heartCount", hearts.size());
+        model.addAttribute("candidateCount", countCandidates(patients, hearts));
+        return PAGE_VIEW;
+    }
+
+    private int countCandidates(List<PatientEntity> patients, List<HeartEntity> hearts) {
         KomplexMatcher matcher = new KomplexMatcher();
-        for (PatientEntity p : patients) {
-            for (HeartEntity h : hearts) {
-                // adapt entities to simple domain objects used by matcher
-                Patient dp = new Patient(String.valueOf(p.getId()), p.getName(), p.getBloodType());
-                Heart dh = new Heart(String.valueOf(h.getId()), h.getDonorName(), h.getBloodType());
-                if (matcher.match(dp, dh)) candidateCount++;
+        int candidateCount = 0;
+
+        for (PatientEntity patientEntity : patients) {
+            Patient patient = new Patient(String.valueOf(patientEntity.getId()), patientEntity.getName(), patientEntity.getBloodType());
+            for (HeartEntity heartEntity : hearts) {
+                Heart heart = new Heart(String.valueOf(heartEntity.getId()), heartEntity.getDonorName(), heartEntity.getBloodType());
+                if (matcher.match(patient, heart)) {
+                    candidateCount++;
+                }
             }
         }
 
-        model.addAttribute("patientCount", patients.size());
-        model.addAttribute("heartCount", hearts.size());
-        model.addAttribute("candidateCount", candidateCount);
-        return "dashboard";
+        return candidateCount;
     }
 }

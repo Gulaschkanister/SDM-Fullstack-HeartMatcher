@@ -1,21 +1,25 @@
 package com.example.endpoints;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.enums.FeedTopic;
 import com.example.database.CompanyEntity;
+import com.example.enums.FeedTopic;
 import com.example.model.company.CompanyRepository;
 import com.example.notification.NewsletterEntry;
 import com.example.notification.NewsletterRepository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Controller
 public class NewsletterController {
+    private static final String PAGE_VIEW = "newsletter";
+    private static final String PAGE_FRAGMENT = "newsletter :: page-content";
+
     private final NewsletterRepository newsletterRepository;
     private final CompanyRepository companyRepository;
 
@@ -27,7 +31,18 @@ public class NewsletterController {
     @GetMapping("/newsletter")
     public String feed(@RequestParam(required = false) FeedTopic topic,
                        @RequestParam(required = false) Long companyId,
+                       @RequestHeader(value = "HX-Request", required = false) String hxRequest,
                        Model model) {
+        populateModel(model, topic, companyId);
+
+        if (isHtmxRequest(hxRequest)) {
+            return PAGE_FRAGMENT;
+        }
+
+        return PAGE_VIEW;
+    }
+
+    private void populateModel(Model model, FeedTopic topic, Long companyId) {
         List<CompanyEntity> companies = companyRepository.findAll();
         Optional<CompanyEntity> selectedCompany = companyId == null
                 ? Optional.empty()
@@ -53,6 +68,9 @@ public class NewsletterController {
         model.addAttribute("companies", companies);
         model.addAttribute("topics", FeedTopic.values());
         model.addAttribute("entries", entries);
-        return "newsletter";
+    }
+
+    private boolean isHtmxRequest(String hxRequest) {
+        return "true".equalsIgnoreCase(hxRequest);
     }
 }
