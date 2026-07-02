@@ -1,4 +1,4 @@
-package com.example.model.manager;
+package com.example.matcher;
 
 import com.example.model.heart.Heart;
 import com.example.model.patient.Patient;

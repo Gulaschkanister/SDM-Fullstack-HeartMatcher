@@ -3,9 +3,9 @@ package com.example.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.matcher.IMatcher;
 import com.example.model.candidate.Candidate;
 import com.example.model.heart.Heart;
-import com.example.model.manager.IMatcher;
 import com.example.model.manager.Manager;
 import com.example.model.patient.Patient;
 

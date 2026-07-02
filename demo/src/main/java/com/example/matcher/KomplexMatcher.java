@@ -1,7 +1,6 @@
 package com.example.matcher;
 
 import com.example.model.heart.Heart;
-import com.example.model.manager.IMatcher;
 import com.example.model.patient.Patient;
 
 public class KomplexMatcher implements IMatcher {
